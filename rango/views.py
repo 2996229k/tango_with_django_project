@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from rango.forms import CategoryForm
 
-from django.http import HttpResponse
 from rango.models import Category
 from rango.models import Page
 from rango.forms import PageForm
@@ -62,23 +61,17 @@ def show_category(request, category_name_slug):
 def add_category(request):
     form = CategoryForm()
 
-    # A HTTP POST?
     if request.method == 'POST':
         form = CategoryForm(request.POST)
 
-        # Have we been provided with a valid form?
         if form.is_valid():
-            # Save the new category to the database.
             form.save(commit=True)
-
-            # Redirect back to index.
-            return redirect('/rango/')
+            return redirect(reverse('rango:index'))
         else:
-            # The supplied form contained errors - print to terminal.
             print(form.errors)
 
-    # Will handle bad form, new form, or no form supplied cases.
     return render(request, 'rango/add_category.html', {'form': form})
+
 
 
 
@@ -89,7 +82,8 @@ def add_page(request, category_name_slug):
         category = None
 
     if category is None:
-        return redirect('/rango/')
+        return redirect(reverse('rango:index'))
+
 
     form = PageForm()
 
